@@ -5,9 +5,13 @@
 #include <GLES3/gl3.h>
 #include <cstdio>
 #include <cstdlib>
+
+#define Assert(x) do {if (!(x)) __debugbreak(); } while (0)
+
+
 const unsigned int DISP_WIDTH = 640;
 const unsigned int DISP_HEIGHT = 480;
-int eeeSDL_main(int argc, char *args[]) {
+int SDL_main(int argc, char *args[]) {
 	// The window
 	SDL_Window *window = NULL;
 	// The OpenGL context
@@ -44,16 +48,23 @@ int eeeSDL_main(int argc, char *args[]) {
 			"Couldn't create an OpenGL context.", NULL);
 		return EXIT_FAILURE;
 	}
-	// Clear to black
+	
+	//
+	Assert(SDL_GL_MakeCurrent(window ,context) == 0);
+	SDL_GL_SetSwapInterval(1);
+	
+	
+	// Wait for the user to quit
+	bool quit = false;
+	while (!quit) {
+		// Clear to black
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			//äÖÈ¾ÎªºìÉ«µÄ
 		glClearColor(1, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	// Update the window
 	SDL_GL_SwapWindow(window);
-	// Wait for the user to quit
-	bool quit = false;
-	while (!quit) {
+	
 			SDL_Event event;
 		if (SDL_WaitEvent(&event) != 0) {
 			if (event.type == SDL_QUIT) {

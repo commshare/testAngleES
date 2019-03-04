@@ -17,7 +17,7 @@
 #endif
 #define Assert(x) do {if (!(x)) __debugbreak(); } while (0)
 
-int SDL_main(int argc, char* argv[])
+int aaaSDL_main(int argc, char* argv[])
 {
 	Assert(SDL_Init(SDL_INIT_VIDEO) == 0);
 
