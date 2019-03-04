@@ -26,5 +26,8 @@
     <ClCompile Include="ConsoleApplication2GLES.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="testGL3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
