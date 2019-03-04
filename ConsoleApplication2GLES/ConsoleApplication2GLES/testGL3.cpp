@@ -11,7 +11,7 @@
 
 const unsigned int DISP_WIDTH = 640;
 const unsigned int DISP_HEIGHT = 480;
-int SDL_main(int argc, char *args[]) {
+int aaaSDL_main(int argc, char *args[]) {
 	// The window
 	SDL_Window *window = NULL;
 	// The OpenGL context

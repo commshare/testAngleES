@@ -17,7 +17,7 @@
 #endif
 #define Assert(x) do {if (!(x)) __debugbreak(); } while (0)
 
-int aaaSDL_main(int argc, char* argv[])
+int SDL_main(int argc, char* argv[])
 {
 	Assert(SDL_Init(SDL_INIT_VIDEO) == 0);
 
@@ -59,14 +59,30 @@ int aaaSDL_main(int argc, char* argv[])
 
 	Assert(SDL_GL_MakeCurrent(w, ctx) == 0);
 	SDL_GL_SetSwapInterval(1);
+	
+	//work from https://wiki.libsdl.org/SDL_GL_GetProcAddress
+	typedef void (APIENTRY * GL_glGetString_Func)(unsigned int);
+	GL_glGetString_Func glGetString_ptr = 0;
 
+	/* Get function pointer */
+	glGetString_ptr = (GL_glGetString_Func)SDL_GL_GetProcAddress("glGetString");
+
+	/* It was your responsibility to make sure this was a valid function to call! */
+	glGetString_ptr(GL_VERSION);
+
+	//not work
 	///*PFNGLGETSTRINGPROC*/ glGetString = SDL_GL_GetProcAddress("glGetString");
 	///*PFNGLCLEARCOLORPROC*/ glClearColor = SDL_GL_GetProcAddress("glClearColor");
 	///*PFNGLCLEARPROC*/ glClear = SDL_GL_GetProcAddress("glClear");
 
-	//printf("GL_VERSION = %s\n", glGetString(GL_VERSION));
-	//printf("GL_VENDOR = %s\n", glGetString(GL_VENDOR));
-	//printf("GL_RENDERER = %s\n", glGetString(GL_RENDERER));
+	/*
+		GL_VERSION = OpenGL ES 3.0 - Build 25.20.100.6323
+		GL_VENDOR = Intel
+		GL_RENDERER = Intel(R) HD Graphics 630
+	*/
+	printf("GL_VERSION = %s\n", glGetString(GL_VERSION));
+	printf("GL_VENDOR = %s\n", glGetString(GL_VENDOR));
+	printf("GL_RENDERER = %s\n", glGetString(GL_RENDERER));
 
 
 #if 0 //this not work !!!!
