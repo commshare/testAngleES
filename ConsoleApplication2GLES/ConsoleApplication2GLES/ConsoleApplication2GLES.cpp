@@ -69,7 +69,8 @@ int SDL_main(int argc, char* argv[])
 	//printf("GL_RENDERER = %s\n", glGetString(GL_RENDERER));
 
 
-		//渲染为红色的
+#if 0 //this not work !!!!
+ 		//渲染为红色的
 		glClearColor(1, 0, 0, 1);
         //black
 		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -77,7 +78,7 @@ int SDL_main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		SDL_GL_SwapWindow(w);
-
+#endif
 	int running = 1;
 	while (running)
 	{
@@ -90,7 +91,8 @@ int SDL_main(int argc, char* argv[])
 				break;
 			}
 		}
-		#if 0
+		//this will work
+	#if 1 
 		//渲染为红色的
 		glClearColor(1, 0, 0, 1);
         //black
@@ -99,7 +101,7 @@ int SDL_main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		SDL_GL_SwapWindow(w);
-        #endif
+   #endif
 	}
 
 	SDL_GL_DeleteContext(ctx);
