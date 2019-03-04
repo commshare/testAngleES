@@ -45,7 +45,9 @@ int eeeSDL_main(int argc, char *args[]) {
 		return EXIT_FAILURE;
 	}
 	// Clear to black
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			//äÖÈ¾ÎªºìÉ«µÄ
+		glClearColor(1, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	// Update the window
 	SDL_GL_SwapWindow(window);
