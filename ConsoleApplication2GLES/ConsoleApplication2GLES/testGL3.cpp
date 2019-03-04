@@ -66,10 +66,11 @@ int SDL_main(int argc, char *args[]) {
 	SDL_GL_SwapWindow(window);
 	
 			SDL_Event event;
-		if (SDL_WaitEvent(&event) != 0) {
+		if (SDL_PollEvent(&event) != 0) {
 			if (event.type == SDL_QUIT) {
 				// User wants to quit
 				quit = true;
+				break;
 			}
 		}
 	}
