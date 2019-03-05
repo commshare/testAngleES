@@ -306,7 +306,8 @@ functions:
 	*/
 	// Wait for the user to quit
 	bool quit = false;
-	while (!quit) {
+	while (!quit) 
+	{
 		SDL_Event event;
 		/*
 		SDL_WaitEvent() stops the program until an event comes in. If the incoming event is an SDL_QUIT,

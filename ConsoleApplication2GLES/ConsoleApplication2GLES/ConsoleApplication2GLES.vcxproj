@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>./common/include;./;../angle/include;../SDL2-devel-2.0.9-VC/SDL2-2.0.9/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./videoinputlibs/videoInput;./videoinputlibs;./common/include;./;../angle/include;../SDL2-devel-2.0.9-VC/SDL2-2.0.9/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,8 +162,6 @@
     <ClInclude Include="SDLEGL\eglSDL.h" />
     <ClInclude Include="SDLEGL\initShader.h" />
     <ClInclude Include="SDLTriangle\Shader.h" />
-    <ClInclude Include="videoinputlibs\extra\myqedit.h" />
-    <ClInclude Include="videoinputlibs\videoInput\videoInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\Source\esShader.cpp" />
@@ -174,6 +172,7 @@
     <ClCompile Include="ConsoleApplication2GLES.cpp" />
     <ClCompile Include="delog.cpp" />
     <ClCompile Include="es3book_Hello_Triangle.cpp" />
+    <ClCompile Include="LeishenYUV.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -187,7 +186,6 @@
     <ClCompile Include="SDLTriangle\Hello_Triangle.cpp" />
     <ClCompile Include="SDLTriangle\Shader.cpp" />
     <ClCompile Include="testGL3.cpp" />
-    <ClCompile Include="videoinputlibs\videoInput\videoInput.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
