@@ -19,6 +19,8 @@
 #define TEX_TYPE 	GL_UNSIGNED_SHORT_5_6_5
 #define TEX_CV_CVT 	cv::COLOR_BGR2BGR565
 
+#define Assert(x) do {if (!(x)) __debugbreak(); } while (0)
+
 ////////////////////
 GLuint programID;
 // OpenGL objects indices
@@ -73,7 +75,7 @@ const char* fragShaderSrc = "precision mediump float;\n"
 #define LOAD_YUV420P 0
 
 int screen_w = 500, screen_h = 500;
-const int pixel_w = 320, pixel_h = 180;
+const int pixel_w = 288, pixel_h = 180;
 //Bit per Pixel
 #if LOAD_BGRA
 const int bpp = 32;
@@ -94,8 +96,11 @@ inline unsigned char CONVERT_ADJUST(double tmp)
 
 
 void drawImageBGR565(int width, int height, unsigned char * data) {
-	// Set the viewport
+	// Set the viewport  //图形最终显示到屏幕的区域的位置、长和宽
 	glViewport(0, 0, width, height);
+
+	//指定矩阵
+	//glMatrixMode(GL_PROJECTION);
 	// Use the program object
 	//shader.use();
 	glUseProgram(programID);
@@ -148,7 +153,51 @@ int showRGB()
 		//glFlush();
 		return 0;
 }
+void loadRGBShader()
+{
+	programID = esLoadProgram(vertShaderSrc, fragShaderSrc);
 
+	// Get location of the attributes after the shader is linked
+	a_position = glGetAttribLocation(programID, "a_position");
+	a_texcoord = glGetAttribLocation(programID, "a_texcoord");
+	if (NB_TEXTURE > 1)
+		texSelect = glGetUniformLocation(programID, "u_texSelect");
+
+	// set-up vertex data, buffers and attributes
+// ------------------------------------------
+// Generate, bind and set data of the Vertex Buffer Object
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
+	const GLuint POS_SIZE = 3;		// position is 3 dimensions
+	const GLuint TEXCOORD_SIZE = 2;	// texcoord is 2 dimensions
+	const GLuint STRIDE = (POS_SIZE + TEXCOORD_SIZE) * sizeof(GLfloat);	// stride in bytes between each attribute
+	size_t offset = 0;
+
+	// position attribute
+	glVertexAttribPointer(a_position, 3, GL_FLOAT, GL_FALSE, STRIDE, (void*)offset);
+	glEnableVertexAttribArray(a_position);
+	offset += POS_SIZE * sizeof(float);
+	// texture attribute
+	glVertexAttribPointer(a_texcoord, 2, GL_FLOAT, GL_FALSE, STRIDE, (void*)offset);
+	glEnableVertexAttribArray(a_texcoord);
+	offset += TEXCOORD_SIZE * sizeof(float);
+
+	// texture configuration
+	for (int i = 0; i < NB_TEXTURE; i++)
+	{
+		glGenTextures(1, &texture[i]);
+		glBindTexture(GL_TEXTURE_2D, texture[i]);
+		// texture wrapping (repeat) and filtering (linear)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
+}
 #if USE_LEISHEN_RGB
 int SDL_main(int argc, char* argv[])
 #else
@@ -158,7 +207,7 @@ int fffeeeSDL_main(int argc, char* argv[])
 #if LOAD_BGRA
 	fp = fopen("../test_bgra_320x180.rgb", "rb+");
 #elif LOAD_RGB24
-	fp = fopen("./test_rgb24_320x180.rgb", "rb+");
+	fp = fopen(/*"./test_rgb24_320x180.rgb"*/"./288_180_output.raw.rgb565.rgb", "rb+");
 #elif LOAD_BGR24
 	fp = fopen("../test_bgr24_320x180.rgb", "rb+");
 #elif LOAD_YUV420P
@@ -212,54 +261,17 @@ int fffeeeSDL_main(int argc, char* argv[])
 			"Couldn't create an OpenGL context.", NULL);
 		return EXIT_FAILURE;
 	}
+	Assert(SDL_GL_MakeCurrent(window, context) == 0);
+	SDL_GL_SetSwapInterval(1);
+
 	// Clear to black
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//GL_COLOR_BUFFER_BIT tells glClear() to only clear the screen/image (a.k.a., colour buffer).
 	glClear(GL_COLOR_BUFFER_BIT);
 	// Update the window，这个是SDL创建的window
 	SDL_GL_SwapWindow(window);
-	programID = esLoadProgram(vertShaderSrc, fragShaderSrc);
-
-	// Get location of the attributes after the shader is linked
-	a_position = glGetAttribLocation(programID, "a_position");
-	a_texcoord = glGetAttribLocation(programID, "a_texcoord");
-	if (NB_TEXTURE > 1)
-		texSelect = glGetUniformLocation(programID, "u_texSelect");
-
-	// set-up vertex data, buffers and attributes
-// ------------------------------------------
-// Generate, bind and set data of the Vertex Buffer Object
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
-	const GLuint POS_SIZE = 3;		// position is 3 dimensions
-	const GLuint TEXCOORD_SIZE = 2;	// texcoord is 2 dimensions
-	const GLuint STRIDE = (POS_SIZE + TEXCOORD_SIZE) * sizeof(GLfloat);	// stride in bytes between each attribute
-	size_t offset = 0;
-
-	// position attribute
-	glVertexAttribPointer(a_position, 3, GL_FLOAT, GL_FALSE, STRIDE, (void*)offset);
-	glEnableVertexAttribArray(a_position);
-	offset += POS_SIZE * sizeof(float);
-	// texture attribute
-	glVertexAttribPointer(a_texcoord, 2, GL_FLOAT, GL_FALSE, STRIDE, (void*)offset);
-	glEnableVertexAttribArray(a_texcoord);
-	offset += TEXCOORD_SIZE * sizeof(float);
-
-	// texture configuration
-	for (int i = 0; i < NB_TEXTURE; i++) 
-	{
-		glGenTextures(1, &texture[i]);
-		glBindTexture(GL_TEXTURE_2D, texture[i]);
-		// texture wrapping (repeat) and filtering (linear)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
-
+	
+	loadRGBShader();
 
 	// Wait for the user to quit
 	bool quit = false;
