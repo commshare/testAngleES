@@ -172,6 +172,7 @@
     <ClCompile Include="ConsoleApplication2GLES.cpp" />
     <ClCompile Include="delog.cpp" />
     <ClCompile Include="es3book_Hello_Triangle.cpp" />
+    <ClCompile Include="LEISHENRGB.cpp" />
     <ClCompile Include="LeishenYUV.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -25,6 +25,9 @@
     <Filter Include="SDLEGL">
       <UniqueIdentifier>{fa83198c-7baf-49d8-aa57-c09d2ebb1279}</UniqueIdentifier>
     </Filter>
+    <Filter Include="videoinput">
+      <UniqueIdentifier>{7b717717-f4cf-4016-b608-067be654e2c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -102,6 +105,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LeishenYUV.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LEISHENRGB.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

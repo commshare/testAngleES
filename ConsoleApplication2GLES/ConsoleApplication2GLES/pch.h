@@ -17,7 +17,8 @@
 #define USE_SDL2_TT_TRIAGNLE 0
 #define USE_SDLEGL_ZEHV_TRIANGLE 0
 
-#define USE_LEISHEN_YUV 1
+#define USE_LEISHEN_YUV 0
+#define USE_LEISHEN_RGB 1
 
 #include "delog.h"
 
