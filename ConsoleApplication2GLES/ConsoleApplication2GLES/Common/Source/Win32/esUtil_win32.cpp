@@ -112,6 +112,45 @@ LRESULT WINAPI ESWindowProc ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //
 //
 
+
+#include <stdexcept>
+#include <iostream>
+//
+//#define STR_WINDOW_PROPNAME		(_T("instance"))
+//#define STR_WINDOW_CLASSNAME	(_T("eduwindow"))
+//HWND m_hWnd;
+//bool HWNDInit(const std::string& strClassName)
+//{
+//	if (m_hWnd) {
+//		return true;
+//	}
+//	WNDCLASSEX wcex;
+//	wcex.cbSize = sizeof(WNDCLASSEX);
+//
+//	wcex.style = CS_HREDRAW | CS_VREDRAW;
+//	wcex.lpfnWndProc = (WNDPROC)ESWindowProc;
+//	wcex.cbClsExtra = 0;
+//	wcex.cbWndExtra = 0;
+//	wcex.hInstance = ::GetModuleHandle(NULL);
+//	wcex.hIcon = NULL;
+//	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+//	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+//	wcex.lpszMenuName = NULL;
+//	wcex.lpszClassName = !strClassName.empty() ? strClassName.c_str() : STR_WINDOW_CLASSNAME;
+//	wcex.hIconSm = NULL;
+//	RegisterClassEx(&wcex);
+//	HWND hWnd = ::CreateWindow(wcex.lpszClassName, NULL, WS_OVERLAPPEDWINDOW,
+//		0, 0, 0, 0, NULL, NULL, wcex.hInstance, NULL);
+//	if (!hWnd) {
+//		return false;
+//	}
+//	::ShowWindow(hWnd, SW_HIDE);
+//	::UpdateWindow(hWnd);
+//	m_hWnd = hWnd;
+//
+//	::SetProp(hWnd, STR_WINDOW_PROPNAME, this);
+//	return true;
+//}
 ///
 //  WinCreate()
 //
@@ -153,10 +192,12 @@ GLboolean WinCreate ( ESContext *esContext, const char *title )
    AdjustWindowRect ( &windowRect, wStyle, FALSE );
 
 
+	 try {
+	 
 	 wchar_t wstr[20];
 	 mbstowcs(wstr, title, strlen(title) + 1);//Plus null
 	 LPWSTR wTitle = wstr;
-   esContext->eglNativeWindow = CreateWindow (
+	 HWND hWnd = CreateWindow (
 		 "opengles3.0",
 		 title,
                                    wStyle,
@@ -169,6 +210,12 @@ GLboolean WinCreate ( ESContext *esContext, const char *title )
                                    hInstance,
                                    NULL );
 
+	 if (!hWnd)
+	 {
+
+		 return false;
+	 }
+	 esContext->eglNativeWindow = hWnd;
    // Set the ESContext* to the GWL_USERDATA so that it is available to the
    // ESWindowProc
 #ifdef _WIN64
@@ -178,6 +225,11 @@ GLboolean WinCreate ( ESContext *esContext, const char *title )
    SetWindowLongPtr ( esContext->eglNativeWindow, GWL_USERDATA, ( LONG ) ( LONG_PTR ) esContext );
 #endif
 
+	 }
+	 catch (std::exception &e)
+	 {
+		 std::cout << e.what() << std::endl;
+	 }
 
    if ( esContext->eglNativeWindow == NULL )
    {
@@ -243,7 +295,11 @@ extern int esMain ( ESContext *esContext );
 //
 //      Main entrypoint for application
 //
+#if USE_EGL_ESBOOK
 int main ( int argc, char *argv[] )
+#else
+int NNNmain(int argc, char *argv[])
+#endif
 {
    ESContext esContext;
 

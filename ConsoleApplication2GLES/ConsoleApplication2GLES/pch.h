@@ -10,5 +10,9 @@
 #define PCH_H
 
 // TODO: 添加要在此处预编译的标头
+#define EGL_EGL_PROTOTYPES 1
 
+#define USE_EGL_ESBOOK 0
+#define USE_SDL_TRIANGLE 0
+#define USE_SDL2_TT_TRIAGNLE 1
 #endif //PCH_H

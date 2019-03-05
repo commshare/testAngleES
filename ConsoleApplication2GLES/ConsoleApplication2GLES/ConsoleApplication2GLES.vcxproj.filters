@@ -13,10 +13,31 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{c3ad3633-4e4a-4867-ac2a-391669cf6fa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\win32">
+      <UniqueIdentifier>{33d85507-e1b5-45fe-80b4-e3999d30067e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="triangle">
+      <UniqueIdentifier>{ebfa7532-cf39-447d-9a88-0c7220e38ba2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Include\esUtil.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Include\esUtil_win.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="angle_inc.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLTriangle\Shader.h">
+      <Filter>triangle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -27,6 +48,33 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="testGL3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Source\esShader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Source\esShapes.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Source\esTransform.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Source\esUtil.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Source\Win32\esUtil_win32.cpp">
+      <Filter>common\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="es3book_Hello_Triangle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLTriangle\Hello_Triangle.cpp">
+      <Filter>triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLTriangle\Shader.cpp">
+      <Filter>triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLTriangleMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

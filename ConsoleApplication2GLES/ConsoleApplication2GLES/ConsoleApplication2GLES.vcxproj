@@ -37,7 +37,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -120,10 +120,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../angle/include;../SDL2-devel-2.0.9-VC/SDL2-2.0.9/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./common/include;./;../angle/include;../SDL2-devel-2.0.9-VC/SDL2-2.0.9/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,16 +154,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="angle_inc.h" />
+    <ClInclude Include="Common\Include\esUtil.h" />
+    <ClInclude Include="Common\Include\esUtil_win.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SDLTriangle\Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\Source\esShader.cpp" />
+    <ClCompile Include="Common\Source\esShapes.cpp" />
+    <ClCompile Include="Common\Source\esTransform.cpp" />
+    <ClCompile Include="Common\Source\esUtil.cpp" />
+    <ClCompile Include="Common\Source\Win32\esUtil_win32.cpp" />
     <ClCompile Include="ConsoleApplication2GLES.cpp" />
+    <ClCompile Include="es3book_Hello_Triangle.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SDLTriangleMain.cpp" />
+    <ClCompile Include="SDLTriangle\Hello_Triangle.cpp" />
+    <ClCompile Include="SDLTriangle\Shader.cpp" />
     <ClCompile Include="testGL3.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
