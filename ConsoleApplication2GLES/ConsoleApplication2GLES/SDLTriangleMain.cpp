@@ -304,7 +304,7 @@ then the code above exits the while loop, and quits.
 				break;
 			}
 		}
-#if 1 
+#if 0
 		//äÖÈ¾ÎªºìÉ«µÄ
 		glClearColor(1, 0, 0, 1);
 		//black
@@ -313,6 +313,12 @@ then the code above exits the while loop, and quits.
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		SDL_GL_SwapWindow(window);
+#else
+		//// Now draw!
+    glDrawArrays(GL_TRIANGLES, 0, numVertices);
+
+//// Update the window
+    SDL_GL_SwapWindow(window);
 #endif
 	}
 
