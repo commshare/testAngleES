@@ -121,19 +121,22 @@ GLuint shaderProgLoad(const char *vertFilename, const char *fragFilename) {
 		return 0;
 	}
 	GLuint shaderProg = glCreateProgram();
-	if (shaderProg) {
+	if (shaderProg) 
+	{
 		glAttachShader(shaderProg, vertShader);
 		glAttachShader(shaderProg, fragShader);
 		glLinkProgram(shaderProg);
 		GLint linkingSucceeded = GL_FALSE;
 		glGetProgramiv(shaderProg, GL_LINK_STATUS, &linkingSucceeded);
-		if (!linkingSucceeded) {
+		if (!linkingSucceeded) 
+		{
 			SDL_Log("Linking shader failed (vert. shader: %s, frag. shader: %s\n",
 				vertFilename, fragFilename);
 			GLint logLength = 0;
 			glGetProgramiv(shaderProg, GL_INFO_LOG_LENGTH, &logLength);
 			GLchar *errLog = (GLchar*)malloc(logLength);
-			if (errLog) {
+			if (errLog)
+			{
 				glGetProgramInfoLog(shaderProg, logLength, &logLength, errLog);
 					SDL_Log("%s\n", errLog);
 				free(errLog);
@@ -141,6 +144,7 @@ GLuint shaderProgLoad(const char *vertFilename, const char *fragFilename) {
 			else {
 				SDL_Log("Couldn't get shader link log; out of memory\n");
 			}
+			//删除程序
 			glDeleteProgram(shaderProg);
 			shaderProg = 0;
 		}
@@ -192,6 +196,45 @@ void vboFree(GLuint vbo) {
 	glDeleteBuffers(1, &vbo);
 }
 
+int do_triangle(GLsizei &numVertices, GLuint &triangleVBO, GLuint &shaderProg)
+{
+#if DO_TRI
+	// Load the shader program and set it for use 加载shader
+	shaderProg = shaderProgLoad("Simple2D.vert", "Simple2D.frag");
+	if (!shaderProg) {
+		// Error messages already displayed...
+		return EXIT_FAILURE;
+	}
+	glUseProgram(shaderProg);
+
+	// Create the triangle
+	const Vertex vertices[] = {
+	{ 0.0f, -0.9f },
+	{ 0.9f, 0.9f },
+	{-0.9f, 0.9f } };
+	GLsizei vertSize = sizeof(vertices[0]);
+	/*GLsizei*/ numVertices = sizeof(vertices) / vertSize;
+	triangleVBO = vboCreate(vertices, numVertices);
+	if (!triangleVBO)
+	{
+		// Failed. Error message has already been printed, so just quit
+		return EXIT_FAILURE;
+	}
+	// Set up for rendering the triangle (activate the VBO)
+	GLuint positionIdx = 0; // Position is vertex attribute 0
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+	glVertexAttribPointer(positionIdx, 2, GL_FLOAT, GL_FALSE,
+		sizeof(Vertex), (const GLvoid*)0);
+	glEnableVertexAttribArray(positionIdx);
+	//// Now draw!
+//glDrawArrays(GL_TRIANGLES, 0, numVertices);
+
+//// Update the window
+//SDL_GL_SwapWindow(window);
+#endif
+	return 0;
+}
+
 #if USE_SDL2_TT_TRIAGNLE
 int SDL_main(int argc, char *args[])
 #else
@@ -227,13 +270,15 @@ int AAASDL_main(int argc, char *args[])
 	window = SDL_CreateWindow("GLES3+SDL2 Tutorial", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, DISP_WIDTH, DISP_HEIGHT,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	if (!window) {
+	if (!window) 
+	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
 			"Couldn't create the main window.", NULL);
 		return EXIT_FAILURE;
 	}
 	context = SDL_GL_CreateContext(window);
-	if (!context) {
+	if (!context) 
+	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
 			"Couldn't create an OpenGL context.", NULL);
 		return EXIT_FAILURE;
@@ -242,46 +287,16 @@ int AAASDL_main(int argc, char *args[])
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//GL_COLOR_BUFFER_BIT tells glClear() to only clear the screen/image (a.k.a., colour buffer).
 	glClear(GL_COLOR_BUFFER_BIT);
-	// Update the window
+	// Update the window，这个是SDL创建的window
 	SDL_GL_SwapWindow(window);
-
-#if DO_TRI
-	// Load the shader program and set it for use
-	GLuint shaderProg = shaderProgLoad("Simple2D.vert", "Simple2D.frag");
-	if (!shaderProg) {
-		// Error messages already displayed...
-		return EXIT_FAILURE;
-	}
-	glUseProgram(shaderProg);
-
-	// Create the triangle
-	const Vertex vertices[] = {
-	{ 0.0f, -0.9f },
-	{ 0.9f, 0.9f },
-	{-0.9f, 0.9f } };
-	GLsizei vertSize = sizeof(vertices[0]);
-	GLsizei numVertices = sizeof(vertices) / vertSize;
-	GLuint triangleVBO = vboCreate(vertices, numVertices);
-	if (!triangleVBO) 
+	GLuint triangleVBO;
+	GLsizei numVertices;
+	GLuint shaderProg;
+	int ret = do_triangle(numVertices,triangleVBO, shaderProg);
+	if (ret == EXIT_FAILURE)
 	{
-		// Failed. Error message has already been printed, so just quit
 		return EXIT_FAILURE;
 	}
-	// Set up for rendering the triangle (activate the VBO)
-	GLuint positionIdx = 0; // Position is vertex attribute 0
-	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
-	glVertexAttribPointer(positionIdx, 2, GL_FLOAT, GL_FALSE,
-		sizeof(Vertex), (const GLvoid*)0);
-	glEnableVertexAttribArray(positionIdx);
-
-
-	//// Now draw!
-	//glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
-	//// Update the window
-	//SDL_GL_SwapWindow(window);
-#endif
-
 
 	/*
 	Normally a “real” OpenGL program would have a main loop that does things like respond to events

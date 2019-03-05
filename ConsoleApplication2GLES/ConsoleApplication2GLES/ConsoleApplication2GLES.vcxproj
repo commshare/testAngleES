@@ -162,6 +162,8 @@
     <ClInclude Include="SDLEGL\eglSDL.h" />
     <ClInclude Include="SDLEGL\initShader.h" />
     <ClInclude Include="SDLTriangle\Shader.h" />
+    <ClInclude Include="videoinputlibs\extra\myqedit.h" />
+    <ClInclude Include="videoinputlibs\videoInput\videoInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\Source\esShader.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="SDLTriangle\Hello_Triangle.cpp" />
     <ClCompile Include="SDLTriangle\Shader.cpp" />
     <ClCompile Include="testGL3.cpp" />
+    <ClCompile Include="videoinputlibs\videoInput\videoInput.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

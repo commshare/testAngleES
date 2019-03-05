@@ -25,6 +25,9 @@
     <Filter Include="SDLEGL">
       <UniqueIdentifier>{fa83198c-7baf-49d8-aa57-c09d2ebb1279}</UniqueIdentifier>
     </Filter>
+    <Filter Include="videoInput">
+      <UniqueIdentifier>{7d178671-9dd8-4fa9-8908-c25a3559df45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -50,6 +53,12 @@
     </ClInclude>
     <ClInclude Include="delog.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="videoinputlibs\videoInput\videoInput.h">
+      <Filter>videoInput</Filter>
+    </ClInclude>
+    <ClInclude Include="videoinputlibs\extra\myqedit.h">
+      <Filter>videoInput</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="delog.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="videoinputlibs\videoInput\videoInput.cpp">
+      <Filter>videoInput</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
