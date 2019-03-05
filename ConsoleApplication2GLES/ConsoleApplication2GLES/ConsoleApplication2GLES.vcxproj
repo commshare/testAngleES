@@ -157,7 +157,10 @@
     <ClInclude Include="angle_inc.h" />
     <ClInclude Include="Common\Include\esUtil.h" />
     <ClInclude Include="Common\Include\esUtil_win.h" />
+    <ClInclude Include="delog.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SDLEGL\eglSDL.h" />
+    <ClInclude Include="SDLEGL\initShader.h" />
     <ClInclude Include="SDLTriangle\Shader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +170,7 @@
     <ClCompile Include="Common\Source\esUtil.cpp" />
     <ClCompile Include="Common\Source\Win32\esUtil_win32.cpp" />
     <ClCompile Include="ConsoleApplication2GLES.cpp" />
+    <ClCompile Include="delog.cpp" />
     <ClCompile Include="es3book_Hello_Triangle.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -174,6 +178,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SDLEGL\eglSDL.cpp" />
+    <ClCompile Include="SDLEGL\initShader.cpp" />
+    <ClCompile Include="SDLEGL\triangle.cpp" />
     <ClCompile Include="SDLTriangleMain.cpp" />
     <ClCompile Include="SDLTriangle\Hello_Triangle.cpp" />
     <ClCompile Include="SDLTriangle\Shader.cpp" />

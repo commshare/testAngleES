@@ -22,6 +22,9 @@
     <Filter Include="triangle">
       <UniqueIdentifier>{ebfa7532-cf39-447d-9a88-0c7220e38ba2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDLEGL">
+      <UniqueIdentifier>{fa83198c-7baf-49d8-aa57-c09d2ebb1279}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -38,6 +41,15 @@
     </ClInclude>
     <ClInclude Include="SDLTriangle\Shader.h">
       <Filter>triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLEGL\eglSDL.h">
+      <Filter>SDLEGL</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLEGL\initShader.h">
+      <Filter>SDLEGL</Filter>
+    </ClInclude>
+    <ClInclude Include="delog.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +87,18 @@
       <Filter>triangle</Filter>
     </ClCompile>
     <ClCompile Include="SDLTriangleMain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLEGL\triangle.cpp">
+      <Filter>SDLEGL</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLEGL\eglSDL.cpp">
+      <Filter>SDLEGL</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLEGL\initShader.cpp">
+      <Filter>SDLEGL</Filter>
+    </ClCompile>
+    <ClCompile Include="delog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

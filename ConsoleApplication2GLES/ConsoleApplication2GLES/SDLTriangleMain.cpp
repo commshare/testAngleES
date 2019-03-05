@@ -262,7 +262,8 @@ int AAASDL_main(int argc, char *args[])
 	GLsizei vertSize = sizeof(vertices[0]);
 	GLsizei numVertices = sizeof(vertices) / vertSize;
 	GLuint triangleVBO = vboCreate(vertices, numVertices);
-	if (!triangleVBO) {
+	if (!triangleVBO) 
+	{
 		// Failed. Error message has already been printed, so just quit
 		return EXIT_FAILURE;
 	}
@@ -304,7 +305,7 @@ then the code above exits the while loop, and quits.
 				break;
 			}
 		}
-#if 0
+#if 0 //OK
 		//渲染为红色的
 		glClearColor(1, 0, 0, 1);
 		//black
@@ -313,7 +314,7 @@ then the code above exits the while loop, and quits.
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		SDL_GL_SwapWindow(window);
-#else
+#else //三角形
 		//// Now draw!
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
