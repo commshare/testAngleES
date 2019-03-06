@@ -66,7 +66,7 @@ const char* fragShaderSrc = "precision mediump float;\n"
 
 #define yangying "yangying640_400.raw.rgb565"
 #define rgb321080p "Image1920x1080.rgb"
-#define rgba640400yangying  "yangying640_400.raw.rgba"
+
 
 //set '1' to choose a type of file to play
 #define LOAD_RGB24   0
@@ -232,7 +232,7 @@ int fffeeeSDL_main(int argc, char* argv[])
 #endif
 {
 #if LOAD_BGRA
-	fp = fopen(/*"../test_bgra_320x180.rgb"*/rgba640400yangying, "rb+");
+	fp = fopen(/*"../test_bgra_320x180.rgb"*/rgb321080p, "rb+");
 #elif LOAD_RGB24
 	fp = fopen(/*"./test_rgb24_320x180.rgb"*//*"./288_180_output.raw.rgb565.rgb"*/yangying, "rb+");
 #elif LOAD_BGR24
