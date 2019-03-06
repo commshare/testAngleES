@@ -67,12 +67,13 @@ const char* fragShaderSrc = "precision mediump float;\n"
 #define yangying "yangying640_400.raw.rgb565"
 #define rgb321080p "Image1920x1080.rgb"
 #define rgba640400yangying  "yangying640_400.raw.rgba"
-
+#define RGB24_yangying "yangying640_400.raw.rgb24"
 //set '1' to choose a type of file to play
-#define LOAD_RGB24   0
+#define LOAD_RGB24   1
 #define LOAD_BGR24   0
-#define LOAD_BGRA    1
+#define LOAD_BGRA    0
 #define LOAD_YUV420P 0
+#define LOAD_RGB32 0
 
 int screen_w = 800, screen_h = 600;
 const int pixel_w = 640, pixel_h = 400;
@@ -84,6 +85,8 @@ const int bpp = 32;
 const int bpp = 24;
 #elif LOAD_YUV420P
 const int bpp = 12;
+#elif LOAD_RGB32
+const int bpp = 32;
 #endif
 //YUV file
 FILE *fp = NULL;
@@ -118,8 +121,7 @@ void drawImageBGR565(int width, int height, unsigned char * data) {
 	glClear(GL_COLOR_BUFFER_BIT);			// clear color buffer
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
-
-void drawImageRGB32(int width, int height, unsigned char * data) {
+void drawImageRGBA(int width, int height, unsigned char * data) {
 	// Set the viewport  //图形最终显示到屏幕的区域的位置、长和宽
 	glViewport(0, 0, 400, 400);
 
@@ -141,7 +143,50 @@ void drawImageRGB32(int width, int height, unsigned char * data) {
 	glClear(GL_COLOR_BUFFER_BIT);			// clear color buffer
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+void drawImageRGB32(int width, int height, unsigned char * data) {
+	// Set the viewport  //图形最终显示到屏幕的区域的位置、长和宽
+	glViewport(0, 0, 400, 400);
 
+	//指定矩阵
+	//glMatrixMode(GL_PROJECTION);
+	// Use the program object
+	//shader.use();
+	glUseProgram(programID);
+
+	for (int i = 0; i < NB_TEXTURE; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, texture[i]);
+	}
+	//这里改了
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);	// grey background
+	glClear(GL_COLOR_BUFFER_BIT);			// clear color buffer
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+void drawImageRGB24(int width, int height, unsigned char * data) {
+	// Set the viewport  //图形最终显示到屏幕的区域的位置、长和宽
+	glViewport(0, 0, 400, 400);
+
+	//指定矩阵
+	//glMatrixMode(GL_PROJECTION);
+	// Use the program object
+	//shader.use();
+	glUseProgram(programID);
+
+	for (int i = 0; i < NB_TEXTURE; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, texture[i]);
+	}
+	//这里改了
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);	// grey background
+	glClear(GL_COLOR_BUFFER_BIT);			// clear color buffer
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
 int showRGB()
 {
 	
@@ -159,7 +204,11 @@ int showRGB()
 		glPixelZoom((float)screen_w / (float)pixel_w, -(float)screen_h / pixel_h);
 #endif
 		#if LOAD_BGRA
+			drawImageRGBA(pixel_w, pixel_h, buffer);
+		#elif LOAD_RGB32
 			drawImageRGB32(pixel_w, pixel_h, buffer);
+		#elif LOAD_RGB24
+		  drawImageRGB24(pixel_w, pixel_h, buffer);
 		#else
 			drawImageBGR565(pixel_w, pixel_h, buffer);
 		#endif
@@ -234,11 +283,15 @@ int fffeeeSDL_main(int argc, char* argv[])
 #if LOAD_BGRA
 	fp = fopen(/*"../test_bgra_320x180.rgb"*/rgba640400yangying, "rb+");
 #elif LOAD_RGB24
+	fp = fopen(/*"./test_rgb24_320x180.rgb"*//*"./288_180_output.raw.rgb565.rgb"*/RGB24_yangying, "rb+");
+#elif LOAD_RGB565
 	fp = fopen(/*"./test_rgb24_320x180.rgb"*//*"./288_180_output.raw.rgb565.rgb"*/yangying, "rb+");
 #elif LOAD_BGR24
 	fp = fopen("../test_bgr24_320x180.rgb", "rb+");
 #elif LOAD_YUV420P
 	fp = fopen("../test_yuv420p_320x180.yuv", "rb+");
+#elif LOAD_RGB32
+	fp = fopen(rgb321080p, "rb+");
 #endif
 	if (fp == NULL) 
 	{
