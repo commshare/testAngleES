@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>./videoinputlibs/videoInput;./videoinputlibs;./common/include;./;../angle/include;../SDL2-devel-2.0.9-VC/SDL2-2.0.9/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./samples/common/third_party/base;./sample/sample_util;./samples/util/;./samples;./videoinputlibs/videoInput;./videoinputlibs;./common/include;./;../angle/include;../SDL2-devel-2.0.9-VC/SDL2-2.0.9/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,13 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="angle_inc.h" />
     <ClInclude Include="Common\Include\esUtil.h" />
     <ClInclude Include="Common\Include\esUtil_win.h" />
     <ClInclude Include="delog.h" />
+    <ClInclude Include="draw_rgb.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="SDLEGL\eglSDL.h" />
-    <ClInclude Include="SDLEGL\initShader.h" />
     <ClInclude Include="SDLTriangle\Shader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -168,11 +166,8 @@
     <ClCompile Include="Common\Source\esShapes.cpp" />
     <ClCompile Include="Common\Source\esTransform.cpp" />
     <ClCompile Include="Common\Source\esUtil.cpp" />
-    <ClCompile Include="Common\Source\Win32\esUtil_win32.cpp" />
     <ClCompile Include="ConsoleApplication2GLES.cpp" />
     <ClCompile Include="delog.cpp" />
-    <ClCompile Include="es3book_Hello_Triangle.cpp" />
-    <ClCompile Include="LEISHENRGB.cpp" />
     <ClCompile Include="LeishenYUV.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -181,13 +176,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="rgb32render.cpp" />
-    <ClCompile Include="SDLEGL\eglSDL.cpp" />
-    <ClCompile Include="SDLEGL\initShader.cpp" />
-    <ClCompile Include="SDLEGL\triangle.cpp" />
     <ClCompile Include="SDLTriangleMain.cpp" />
     <ClCompile Include="SDLTriangle\Hello_Triangle.cpp" />
     <ClCompile Include="SDLTriangle\Shader.cpp" />
-    <ClCompile Include="testGL3.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

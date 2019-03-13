@@ -10,6 +10,7 @@
 #include <GLES3/gl3.h>
 #include <cstdio>
 #include <cstdlib>
+#include "draw_rgb.h"
 SDL_GLContext yuvcontext = NULL;
 SDL_Window *yuvwindow = NULL;
 //Select one of the Texture mode (Set '1'):
@@ -21,10 +22,10 @@ SDL_Window *yuvwindow = NULL;
 #define Assert(x) do {if (!(x)) __debugbreak(); } while (0)
 
 const int screen_w = 500, screen_h = 500;
-const int pixel_w = 320, pixel_h = 180;
+const int ypixel_w = 320, ypixel_h = 180;
 //YUV file
 FILE *infile = NULL;
-unsigned char buf[pixel_w*pixel_h * 3 / 2];
+unsigned char buf[ypixel_w*ypixel_h * 3 / 2];
 unsigned char *plane[3];
 
 GLuint p;
@@ -38,11 +39,12 @@ GLuint textureUniformY, textureUniformU, textureUniformV;
 void showYUV()
 {
 	//从infile读取一帧yuv到buf里
-	if (fread(buf, 1, pixel_w*pixel_h * 3 / 2, infile) != pixel_w * pixel_h * 3 / 2)
+	if (fread(buf, 1, ypixel_w*ypixel_h * 3 / 2, infile) != ypixel_w * ypixel_h * 3 / 2)
 	{
 		// Loop
 		fseek(infile, 0, SEEK_SET);
-		fread(buf, 1, pixel_w*pixel_h * 3 / 2, infile);
+		fread(buf, 1, ypixel_w*ypixel_h * 3 / 2, infile);
+		fread(buf, 1, ypixel_w*ypixel_h * 3 / 2, infile);
 	}
 	Assert(SDL_GL_MakeCurrent(yuvwindow, yuvcontext) == 0);
 
@@ -54,19 +56,19 @@ void showYUV()
   //
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, id_y);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, pixel_w, pixel_h, 0, GL_RED, GL_UNSIGNED_BYTE, plane[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, ypixel_w, ypixel_h, 0, GL_RED, GL_UNSIGNED_BYTE, plane[0]);
 	glUniform1i(textureUniformY, 0);
 
 	//U
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, id_u);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, pixel_w / 2, pixel_h / 2, 0, GL_RED, GL_UNSIGNED_BYTE, plane[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, ypixel_w / 2, ypixel_h / 2, 0, GL_RED, GL_UNSIGNED_BYTE, plane[1]);
 	glUniform1i(textureUniformU, 1);
 
 	//V
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, id_v);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, pixel_w / 2, pixel_h / 2, 0, GL_RED, GL_UNSIGNED_BYTE, plane[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, ypixel_w / 2, ypixel_h / 2, 0, GL_RED, GL_UNSIGNED_BYTE, plane[2]);
 	glUniform1i(textureUniformV, 2);
 
 	// Draw
@@ -217,32 +219,41 @@ int openfile()
 	//全局变量plane
 	//YUV Data
 	plane[0] = buf;
-	plane[1] = plane[0] + pixel_w * pixel_h;
-	plane[2] = plane[1] + pixel_w * pixel_h / 4;
+	plane[1] = plane[0] + ypixel_w * ypixel_h;
+	plane[2] = plane[1] + ypixel_w * ypixel_h / 4;
 	return 0;
 }
 
 int ttttt()
 {
-	//With base initialization done, we can now open the window and set up the OpenGL context:
+	static bool binit = false;
+
+	SDL_GLContext context;
+	if (!binit)
+	{
+		//With base initialization done, we can now open the window and set up the OpenGL context:
 // Create the window
-	SDL_Window *window = SDL_CreateWindow("ttttt", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, screen_w, screen_h,
-		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	if (!window)
-	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
-			"Couldn't create the main window.", NULL);
-		return EXIT_FAILURE;
+		rgbwindow = SDL_CreateWindow("ttttt", SDL_WINDOWPOS_UNDEFINED,
+			SDL_WINDOWPOS_UNDEFINED, screen_w, screen_h,
+			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		if (!rgbwindow)
+		{
+			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
+				"Couldn't create the main window.", NULL);
+			return EXIT_FAILURE;
+		}
+		rgbcontext = SDL_GL_CreateContext(rgbwindow);
+		if (!rgbcontext)
+		{
+			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
+				"Couldn't create an OpenGL context.", NULL);
+			return EXIT_FAILURE;
+		}
+		Assert(SDL_GL_MakeCurrent(rgbwindow, rgbcontext) == 0);
+		binit = true;
 	}
-	SDL_GLContext context = SDL_GL_CreateContext(window);
-	if (!context)
-	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
-			"Couldn't create an OpenGL context.", NULL);
-		return EXIT_FAILURE;
-	}
-	Assert(SDL_GL_MakeCurrent(window, context) == 0);
+	loadRGBShader();
+	
 	return 0;
 }
 
@@ -345,6 +356,7 @@ then the code above exits the while loop, and quits.
 		showYUV();
 //// Update the window
     SDL_GL_SwapWindow(yuvwindow);
+		drawImageRGB24(pixel_w,pixel_h);
 #endif
 	}
 	return 0;

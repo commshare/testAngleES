@@ -46,8 +46,28 @@
 //  Private Functions
 //
 //
-
-
+//#define BUFSIZ 1024
+/////
+//// esLogMessage()
+////
+////    Log an error message to the debug output for the platform
+////
+//void ESUTIL_API esLogMessage(const char *formatStr, ...)
+//{
+//	va_list params;
+//	char buf[BUFSIZ];
+//
+//	va_start(params, formatStr);
+//	vsprintf(buf, formatStr, params);
+//
+//#ifdef ANDROID
+//	__android_log_print(ANDROID_LOG_INFO, "esUtil", "%s", buf);
+//#else
+//	printf("%s", buf);
+//#endif
+//
+//	va_end(params);
+//}
 
 //////////////////////////////////////////////////////////////////
 //

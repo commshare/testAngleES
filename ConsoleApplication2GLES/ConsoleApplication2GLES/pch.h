@@ -10,15 +10,16 @@
 #define PCH_H
 
 // TODO: 添加要在此处预编译的标头
-#define EGL_EGL_PROTOTYPES 1
+#define EGL_EGL_PROTOTYPES 0
+
 
 #define USE_EGL_ESBOOK 0
 #define USE_SDL_TRIANGLE 0
 #define USE_SDL2_TT_TRIAGNLE 0
 #define USE_SDLEGL_ZEHV_TRIANGLE 0
 
-#define USE_LEISHEN_YUV 0
-#define USE_LEISHEN_RGB 1
+#define USE_LEISHEN_YUV 1
+#define USE_LEISHEN_RGB 0
 
 #include "delog.h"
 

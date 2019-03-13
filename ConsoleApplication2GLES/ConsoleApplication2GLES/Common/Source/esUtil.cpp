@@ -98,6 +98,8 @@ __attribute__ ( ( packed ) )
 #pragma pack(pop,x1)
 #endif
 
+
+
 #ifndef __APPLE__
 
 ///
@@ -108,7 +110,8 @@ __attribute__ ( ( packed ) )
 //
 EGLint GetContextRenderableType ( EGLDisplay eglDisplay )
 {
-#ifdef EGL_KHR_create_context
+//#ifdef EGL_KHR_create_context
+#if 0
    const char *extensions = eglQueryString ( eglDisplay, EGL_EXTENSIONS );
 
    // check whether EGL_KHR_create_context is in the extension string
@@ -143,6 +146,7 @@ EGLint GetContextRenderableType ( EGLDisplay eglDisplay )
 //
 GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, GLint width, GLint height, GLuint flags )
 {
+#if 0 
 #ifndef __APPLE__
    EGLConfig config;
    EGLint majorVersion;
@@ -246,7 +250,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    }
 
 #endif // #ifndef __APPLE__
-
+#endif
    return GL_TRUE;
 }
 

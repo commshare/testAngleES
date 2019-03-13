@@ -167,7 +167,7 @@ void drawImageRGB32(int width, int height, unsigned char * data) {
 }
 void drawImageRGB24(int width, int height, unsigned char * data) {
 	// Set the viewport  //图形最终显示到屏幕的区域的位置、长和宽
-	glViewport(0, 0, 400, 400);
+	glViewport(0, 100, 400, 400);
 
 	//指定矩阵
 	//glMatrixMode(GL_PROJECTION);
