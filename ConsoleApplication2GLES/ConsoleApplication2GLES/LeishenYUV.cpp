@@ -10,14 +10,15 @@
 #include <GLES3/gl3.h>
 #include <cstdio>
 #include <cstdlib>
-
-
+SDL_GLContext yuvcontext = NULL;
+SDL_Window *yuvwindow = NULL;
 //Select one of the Texture mode (Set '1'):
 #define TEXTURE_DEFAULT   1
 //Rotate the texture
 #define TEXTURE_ROTATE    0
 //Show half of the Texture
 #define TEXTURE_HALF      0
+#define Assert(x) do {if (!(x)) __debugbreak(); } while (0)
 
 const int screen_w = 500, screen_h = 500;
 const int pixel_w = 320, pixel_h = 180;
@@ -43,6 +44,8 @@ void showYUV()
 		fseek(infile, 0, SEEK_SET);
 		fread(buf, 1, pixel_w*pixel_h * 3 / 2, infile);
 	}
+	Assert(SDL_GL_MakeCurrent(yuvwindow, yuvcontext) == 0);
+
 	//Clear
 	glClearColor(0.0, 255, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -68,6 +71,7 @@ void showYUV()
 
 	// Draw
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	SDL_GL_SwapWindow(yuvwindow);
 }
 
 char *textFileRead(char * filename)
@@ -217,6 +221,31 @@ int openfile()
 	plane[2] = plane[1] + pixel_w * pixel_h / 4;
 	return 0;
 }
+
+int ttttt()
+{
+	//With base initialization done, we can now open the window and set up the OpenGL context:
+// Create the window
+	SDL_Window *window = SDL_CreateWindow("ttttt", SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED, screen_w, screen_h,
+		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	if (!window)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
+			"Couldn't create the main window.", NULL);
+		return EXIT_FAILURE;
+	}
+	SDL_GLContext context = SDL_GL_CreateContext(window);
+	if (!context)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
+			"Couldn't create an OpenGL context.", NULL);
+		return EXIT_FAILURE;
+	}
+	Assert(SDL_GL_MakeCurrent(window, context) == 0);
+	return 0;
+}
+
 #if USE_LEISHEN_YUV
 int SDL_main(int argc, char* argv[])
 #else
@@ -227,9 +256,9 @@ int cccSDL_main(int argc, char* argv[])
 
 
 	// The window
-	SDL_Window *window = NULL;
+
 	// The OpenGL context
-	SDL_GLContext context = NULL;
+
 	// Init SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		SDL_Log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -252,18 +281,18 @@ int cccSDL_main(int argc, char* argv[])
 
 	//With base initialization done, we can now open the window and set up the OpenGL context:
 	// Create the window
-	window = SDL_CreateWindow("GLES3+SDL2 Tutorial", SDL_WINDOWPOS_UNDEFINED,
+	yuvwindow = SDL_CreateWindow("GLES3+SDL2 Tutorial", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, screen_w, screen_h,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	printf("Version: %s\n", glGetString(GL_VERSION));
-	if (!window) 
+	if (!yuvwindow)
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
 			"Couldn't create the main window.", NULL);
 		return EXIT_FAILURE;
 	}
-	context = SDL_GL_CreateContext(window);
-	if (!context)
+	yuvcontext = SDL_GL_CreateContext(yuvwindow);
+	if (!yuvcontext)
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error",
 			"Couldn't create an OpenGL context.", NULL);
@@ -274,9 +303,12 @@ int cccSDL_main(int argc, char* argv[])
 	//GL_COLOR_BUFFER_BIT tells glClear() to only clear the screen/image (a.k.a., colour buffer).
 	glClear(GL_COLOR_BUFFER_BIT);
 	// Update the window，这个是SDL创建的window
-	SDL_GL_SwapWindow(window);
+	SDL_GL_SwapWindow(yuvwindow);
+
+
 	openfile();
 	LOADSHaders();
+	ttttt();
 		/*
 	Normally a “real” OpenGL program would have a main loop that does things like respond to events
 and render animated graphics. Since this is a really basic program, all that’s needed is to wait for the
@@ -312,7 +344,7 @@ then the code above exits the while loop, and quits.
 #else 
 		showYUV();
 //// Update the window
-    SDL_GL_SwapWindow(window);
+    SDL_GL_SwapWindow(yuvwindow);
 #endif
 	}
 	return 0;
