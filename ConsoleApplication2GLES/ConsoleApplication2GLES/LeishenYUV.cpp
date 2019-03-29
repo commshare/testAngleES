@@ -233,7 +233,7 @@ int ttttt()
 	{
 		//With base initialization done, we can now open the window and set up the OpenGL context:
 // Create the window
-		rgbwindow = SDL_CreateWindow("ttttt", SDL_WINDOWPOS_UNDEFINED,
+		rgbwindow = SDL_CreateWindow("rgbwindow", SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED, screen_w, screen_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 		if (!rgbwindow)
@@ -292,7 +292,7 @@ int cccSDL_main(int argc, char* argv[])
 
 	//With base initialization done, we can now open the window and set up the OpenGL context:
 	// Create the window
-	yuvwindow = SDL_CreateWindow("GLES3+SDL2 Tutorial", SDL_WINDOWPOS_UNDEFINED,
+	yuvwindow = SDL_CreateWindow("yuvwindow", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, screen_w, screen_h,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	printf("Version: %s\n", glGetString(GL_VERSION));
