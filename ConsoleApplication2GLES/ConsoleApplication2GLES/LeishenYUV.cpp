@@ -1,4 +1,4 @@
-#include"pch.h"
+﻿#include"pch.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -31,14 +31,14 @@ unsigned char *plane[3];
 GLuint p;
 GLuint id_y, id_u, id_v; // Texture id
 GLuint textureUniformY, textureUniformU, textureUniformV;
-
+//https://github.com/zcgit/cocos2dx-ffmpeg/blob/86d197fe9ba44de66637de298f71bb5f8cdfcc7b/video/FFSprite.cpp
 
 #define ATTRIB_VERTEX 3
 #define ATTRIB_TEXTURE 4
 
 void showYUV()
 {
-	//��infile��ȡһ֡yuv��buf��
+	//从infile读取一帧yuv到buf里
 	if (fread(buf, 1, ypixel_w*ypixel_h * 3 / 2, infile) != ypixel_w * ypixel_h * 3 / 2)
 	{
 		// Loop
@@ -70,10 +70,19 @@ void showYUV()
 	glBindTexture(GL_TEXTURE_2D, id_v);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, ypixel_w / 2, ypixel_h / 2, 0, GL_RED, GL_UNSIGNED_BYTE, plane[2]);
 	glUniform1i(textureUniformV, 2);
-
+	GLuint err1 = glGetError();
+	if (err1 != GL_NO_ERROR) {
+		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+		delog("3333 Error OpenGL error setting up rendering %i\n", (unsigned int)err1);
+	}
 	// Draw
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	SDL_GL_SwapWindow(yuvwindow);
+	GLuint err = glGetError();
+	if (err != GL_NO_ERROR) {
+		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+		delog("22222 Error OpenGL error setting up rendering %i\n", (unsigned int)err);
+	}
 }
 
 char *textFileRead(char * filename)
@@ -96,7 +105,18 @@ char *textFileRead(char * filename)
 	s[len] = 0;
 	return s;
 }
-
+/*
+所有的返回值有：
+GL_NO_ERROR ：（0）当前无错误值
+GL_INVALID_ENUM ：（1280）仅当使用非法枚举参数时，如果使用该参数有指定环境，则返回 GL_INVALID_OPERATION
+GL_INVALID_VALUE ：（1281）仅当使用非法值参数时，如果使用该参数有指定环境，则返回 GL_INVALID_OPERATION
+GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+GL_STACK_OVERFLOW ：（1283）压栈操作超出堆栈大小。
+GL_STACK_UNDERFLOW ：（1284）出栈操作达到堆栈底部。
+GL_OUT_OF_MEMORY ：（1285）不能分配足够内存时。
+GL_INVALID_FRAMEBUFFER_OPERATION ：（1286）当操作未准备好的真缓存时。
+GL_CONTEXT_LOST ：（1287）由于显卡重置导致 OpenGL context 丢失。
+*/
 //Init Shader
 void LOADSHaders()
 {
@@ -136,7 +156,11 @@ void LOADSHaders()
 	glGetProgramiv(p, GL_LINK_STATUS, &linked);
 	//Program: Step4
 	glUseProgram(p);
-
+	GLuint err2 = glGetError();
+	if (err2 != GL_NO_ERROR) {
+		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+		delog("4444 Error OpenGL error setting up rendering %i\n", (unsigned int)err2);
+	}
 
 	//Get Uniform Variables Location
 	textureUniformY = glGetUniformLocation(p, "tex_y");
@@ -175,7 +199,7 @@ void LOADSHaders()
 	};
 #endif
 
-	//�������������
+	//顶点坐标的数组
 	//Set Arrays
 	glVertexAttribPointer(ATTRIB_VERTEX, 2, GL_FLOAT, 0, 0, vertexVertices);
 	//Enable it
@@ -183,8 +207,8 @@ void LOADSHaders()
 	glVertexAttribPointer(ATTRIB_TEXTURE, 2, GL_FLOAT, 0, 0, textureVertices);
 	glEnableVertexAttribArray(ATTRIB_TEXTURE);
 
-
-	//YUV�������
+	glBindTexture(GL_TEXTURE_2D,0);
+	//YUV文理句柄
 	glGenTextures(1, &id_y);
 	glBindTexture(GL_TEXTURE_2D, id_y);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -205,7 +229,11 @@ void LOADSHaders()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
+	GLuint err = glGetError();
+	if (err != GL_NO_ERROR) {
+		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+		delog("11111 Error OpenGL error setting up rendering %i\n", (unsigned int)err);
+	}
 }
 
 int openfile()
@@ -216,11 +244,39 @@ int openfile()
 		printf("cannot open this file\n");
 		return -1;
 	}
-	//ȫ�ֱ���plane
+	//全局变量plane
 	//YUV Data
 	plane[0] = buf;
 	plane[1] = plane[0] + ypixel_w * ypixel_h;
 	plane[2] = plane[1] + ypixel_w * ypixel_h / 4;
+	uint8_t *luma = plane[0];
+	uint8_t * cb = plane[1];
+	uint8_t * cr = plane[2];
+	const uint8_t *pixels[] = { luma, cb, cr };
+	int frameWidth = 320;
+	int frameHeight = 180;
+	const int widths[] = { frameWidth, frameWidth / 2, frameWidth / 2 };
+	const int heights[] = { frameHeight, frameHeight / 2, frameHeight / 2 };
+	GLuint textures[3];
+	for (int i = 0; i < 3; ++i)
+	{
+		glBindTexture(GL_TEXTURE_2D, textures[i]);
+
+		glTexImage2D(GL_TEXTURE_2D,
+			0,
+			GL_LUMINANCE,
+			widths[i],
+			heights[i],
+			0,
+			GL_LUMINANCE,
+			GL_UNSIGNED_BYTE,
+			pixels[i]);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
 	return 0;
 }
 
@@ -257,6 +313,46 @@ int ttttt()
 	return 0;
 }
 
+///////////////////////////////
+#if 0
+const char *  VERTEX_SHADER =
+"attribute vec4 vPosition;    \n" +
+"attribute vec2 a_texCoord;   \n" +
+"varying vec2 tc;             \n" +
+"void main()                  \n" +
+"{                            \n" +
+"   gl_Position = vPosition;  \n" +
+"   tc = a_texCoord;          \n" +
+"}                            \n";
+
+
+const char *  FRAG_SHADER =
+"precision mediump float;\n" +
+"varying  vec2 tc;                      \n" +
+"uniform sampler2D SamplerY;            \n" +
+"uniform sampler2D SamplerUV;            \n" +
+"const float PI = 3.14159265;           \n" +
+"const mat3 convertMat = mat3( 1.0, 1.0, 1.0, 0.0, -0.39465, 2.03211, 1.13983, -0.58060, 0.0 );\n" +
+"void main(void)                            \n" +
+"{                                          \n" +
+"vec3 yuv;                                  \n" +
+"yuv.x = texture2D(SamplerY, tc).r;         \n" +
+"yuv.z = texture2D(SamplerUV, tc).r - 0.5;   \n" +
+"yuv.y = texture2D(SamplerUV, tc).a - 0.5;   \n" +
+"vec3 color = convertMat * yuv;             \n" +
+"vec4 mainColor = vec4(color, 1.0);         \n" +
+"gl_FragColor =mainColor;                                       \n" +
+"}   
+                                                           \n";
+#endif
+//-------------------- -
+//作者：fu_shuwu
+//来源：CSDN
+//原文：https ://blog.csdn.net/fu_shuwu/article/details/72983575 
+//版权声明：本文为博主原创文章，转载请附上博文链接！
+//////////////////////////////
+
+
 #if USE_LEISHEN_YUV
 int SDL_main(int argc, char* argv[])
 #else
@@ -283,12 +379,12 @@ int cccSDL_main(int argc, char* argv[])
 	SDL_SetHint(SDL_HINT_VIDEO_WIN_D3DCOMPILER, "none");
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	// Request OpenGL ES 3.0
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	// Want double-buffering
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-
+	//ttttt();
 
 	//With base initialization done, we can now open the window and set up the OpenGL context:
 	// Create the window
@@ -311,19 +407,21 @@ int cccSDL_main(int argc, char* argv[])
 	}
 	// Clear to black
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	//黄色
+	//glClearColor(1.0, 1.0, 0.5, 1.0);
 	//GL_COLOR_BUFFER_BIT tells glClear() to only clear the screen/image (a.k.a., colour buffer).
 	glClear(GL_COLOR_BUFFER_BIT);
-	// Update the window�������SDL������window
+	// Update the window，这个是SDL创建的window
 	SDL_GL_SwapWindow(yuvwindow);
 
-
-	openfile();
+	//yuv
+	openfile();    
 	LOADSHaders();
-	ttttt();
+	//ttttt();
 		/*
-	Normally a ��real�� OpenGL program would have a main loop that does things like respond to events
-and render animated graphics. Since this is a really basic program, all that��s needed is to wait for the
-user to click the window��s close button. SDL makes this relatively easy with its event handling
+	Normally a “real” OpenGL program would have a main loop that does things like respond to events
+and render animated graphics. Since this is a really basic program, all that’s needed is to wait for the
+user to click the window’s close button. SDL makes this relatively easy with its event handling
 functions:
 	*/
 	// Wait for the user to quit
@@ -344,7 +442,7 @@ then the code above exits the while loop, and quits.
 			}
 		}
 #if 0 //OK
-		//��ȾΪ��ɫ��
+		//渲染为红色的
 		glClearColor(1, 0, 0, 1);
 		//black
 //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

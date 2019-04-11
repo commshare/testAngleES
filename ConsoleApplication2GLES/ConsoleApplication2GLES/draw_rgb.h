@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"pch.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -133,9 +133,15 @@ void drawImageRGB24(int width , int height) {
 	for (int i = 0; i < NB_TEXTURE; i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
+		//　glBindTexture函数实现了将调用glGenTextures函数生成的纹理的名字绑定到对应的目标纹理上
 		glBindTexture(GL_TEXTURE_2D, texture[i]);
 	}
-
+	//glTexImage2D在OpenGL中主要用来指定二维纹理和立方体纹理
+	/*
+	1.当有缓冲区绑定到 GL_PIXEL_PACK/UNPACK_BUFFER 时，这时候使用了PBO(Pixel Buffer Object)，此时的data是一个指向缓冲区对象数据的偏移量
+2.当没有缓冲区绑定到GL_PIXEL_PACK/UNPACK_BUFFER 时，这是data是指向内存中的指针(上文中提到的pBytes)
+原文：https://blog.csdn.net/csxiaoshui/article/details/27543615 
+	*/
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);	// grey background
