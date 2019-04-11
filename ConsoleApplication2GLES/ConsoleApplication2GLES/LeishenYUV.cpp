@@ -10,6 +10,8 @@
 #include <GLES3/gl3.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstdio>
+#include <cstdlib>
 #include "draw_rgb.h"
 SDL_GLContext yuvcontext = NULL;
 SDL_Window *yuvwindow = NULL;
@@ -35,6 +37,31 @@ GLuint textureUniformY, textureUniformU, textureUniformV;
 
 #define ATTRIB_VERTEX 3
 #define ATTRIB_TEXTURE 4
+
+
+GLenum glCheckError_(const char *file, int line)
+{
+	GLenum errorCode;
+	while ((errorCode = glGetError()) != GL_NO_ERROR)
+	{
+		std::string error;
+		switch (errorCode)
+		{
+		case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
+		case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
+		case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
+		//case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
+		//case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
+		case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+		}
+		//std::cout << error << " | " << file << " (" << line << ")" << std::endl;
+		delog("glerr[%d] %s %s\n",line,error.c_str(),file);
+	}
+	return errorCode;
+}
+#define glCheckError() glCheckError_(__FILE__, __LINE__) 
+
 
 void showYUV()
 {
@@ -70,19 +97,21 @@ void showYUV()
 	glBindTexture(GL_TEXTURE_2D, id_v);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, ypixel_w / 2, ypixel_h / 2, 0, GL_RED, GL_UNSIGNED_BYTE, plane[2]);
 	glUniform1i(textureUniformV, 2);
-	GLuint err1 = glGetError();
-	if (err1 != GL_NO_ERROR) {
-		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
-		delog("3333 Error OpenGL error setting up rendering %i\n", (unsigned int)err1);
-	}
+	//GLuint err1 = glGetError();
+	//if (err1 != GL_NO_ERROR) {
+	//	//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+	//	delog("3333 Error OpenGL error setting up rendering %i\n", (unsigned int)err1);
+	//}
+	glCheckError();
 	// Draw
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	SDL_GL_SwapWindow(yuvwindow);
-	GLuint err = glGetError();
-	if (err != GL_NO_ERROR) {
-		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
-		delog("22222 Error OpenGL error setting up rendering %i\n", (unsigned int)err);
-	}
+	//GLuint err = glGetError();
+	//if (err != GL_NO_ERROR) {
+	//	//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+	//	delog("22222 Error OpenGL error setting up rendering %i\n", (unsigned int)err);
+	//}
+	glCheckError();
 }
 
 char *textFileRead(char * filename)
@@ -117,9 +146,150 @@ GL_OUT_OF_MEMORY ：（1285）不能分配足够内存时。
 GL_INVALID_FRAMEBUFFER_OPERATION ：（1286）当操作未准备好的真缓存时。
 GL_CONTEXT_LOST ：（1287）由于显卡重置导致 OpenGL context 丢失。
 */
+/** Gets the file's length.
+*
+* @param file the file
+*
+* @return size_t the file's length in bytes
+*/
+static size_t AfileGetLength(FILE *file) {
+	size_t length;
+	size_t currPos = ftell(file);
+	fseek(file, 0, SEEK_END);
+	length = ftell(file);
+	// Return the file to its previous position
+	fseek(file, currPos, SEEK_SET);
+	return length;
+}
+/* http://www.ayqy.net/blog/uniform%E5%8F%98%E9%87%8F%E4%B8%8E%E7%89%87%E5%85%83%E7%9D%80%E8%89%B2%E5%99%A8_webgl%E7%AC%94%E8%AE%B04/
+INFO: Compilation of shader Shader.fsh failed:
+INFO: ERROR: 0:1: '' : No precision specified for (float)
+ERROR: 0:7: '' : No precision specified for (float)
+ERROR: 0:8: '' : No precision specified for (float)
+
+INFO: Couldn't load fragment shader: Shader.fsh
+shaderProgLoad fail
+*/
+/** Loads and compiles a shader from a file.
+*
+* This will print any errors to the console.
+*
+* @param filename the shader's filename
+* @param shaderType the shader type (e.g., GL_VERTEX_SHADER)
+*
+* @return GLuint the shader's ID, or 0 if failed
+*/
+static GLuint AshaderLoad(const char *filename, GLenum shaderType) {
+	errno_t err;
+	FILE *file;
+	err = fopen_s(&file, filename, "r");
+	if (err != 0) {
+		SDL_Log("Can't open file: %s\n", filename);
+		return 0;
+	}
+	size_t length = AfileGetLength(file);
+	// Alloc space for the file (plus '\0' termination)
+	GLchar *shaderSrc = (GLchar*)calloc(length + 1, 1);
+	if (!shaderSrc) {
+		SDL_Log("Out of memory when reading file: %s\n", filename);
+		fclose(file);
+		file = NULL;
+		return 0;
+	}
+	fread(shaderSrc, 1, length, file);
+	// Done with the file
+	fclose(file);
+	file = NULL;
+	// Create the shader
+	GLuint shader = glCreateShader(shaderType);
+	glShaderSource(shader, 1, (const GLchar**)&shaderSrc, NULL);
+	free(shaderSrc);
+	shaderSrc = NULL;
+	// Compile it
+	glCompileShader(shader);
+	GLint compileSucceeded = GL_FALSE;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileSucceeded);
+	if (!compileSucceeded) {
+		// Compilation failed. Print error info
+		SDL_Log("Compilation of shader %s failed:\n", filename);
+		GLint logLength = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+		GLchar *errLog = (GLchar*)malloc(logLength);
+		if (errLog) {
+			glGetShaderInfoLog(shader, logLength, &logLength, errLog);
+			SDL_Log("%s\n", errLog);
+			free(errLog);
+		}
+		else {
+			SDL_Log("Couldn't get shader log; out of memory\n");
+		}
+		glDeleteShader(shader);
+		shader = 0;
+	}
+	return shader;
+}
+/** Destroys a shader.
+*/
+static void AshaderDestroy(GLuint shaderID) {
+	glDeleteShader(shaderID);
+}
+GLuint AshaderProgLoad(const char *vertFilename, const char *fragFilename) {
+	GLuint vertShader = AshaderLoad(vertFilename, GL_VERTEX_SHADER);
+	if (!vertShader) {
+		SDL_Log("Couldn't load vertex shader: %s\n", vertFilename);
+		return 0;
+	}
+	GLuint fragShader = AshaderLoad(fragFilename, GL_FRAGMENT_SHADER);
+	if (!fragShader) {
+		SDL_Log("Couldn't load fragment shader: %s\n", fragFilename);
+		AshaderDestroy(vertShader);
+		vertShader = 0;
+		return 0;
+	}
+	GLuint shaderProg = glCreateProgram();
+	if (shaderProg)
+	{
+		glAttachShader(shaderProg, vertShader);
+		glAttachShader(shaderProg, fragShader);
+		glLinkProgram(shaderProg);
+		GLint linkingSucceeded = GL_FALSE;
+		glGetProgramiv(shaderProg, GL_LINK_STATUS, &linkingSucceeded);
+		if (!linkingSucceeded)
+		{
+			SDL_Log("Linking shader failed (vert. shader: %s, frag. shader: %s\n",
+				vertFilename, fragFilename);
+			GLint logLength = 0;
+			glGetProgramiv(shaderProg, GL_INFO_LOG_LENGTH, &logLength);
+			GLchar *errLog = (GLchar*)malloc(logLength);
+			if (errLog)
+			{
+				glGetProgramInfoLog(shaderProg, logLength, &logLength, errLog);
+				SDL_Log("%s\n", errLog);
+				free(errLog);
+			}
+			else {
+				SDL_Log("Couldn't get shader link log; out of memory\n");
+			}
+			//删除程序
+			glDeleteProgram(shaderProg);
+			shaderProg = 0;
+		}
+	}
+	else {
+		SDL_Log("Couldn't create shader program\n");
+	}
+	// Don't need these any more
+	AshaderDestroy(vertShader);
+	AshaderDestroy(fragShader);
+	return shaderProg;
+}
+
 //Init Shader
 void LOADSHaders()
 {
+	GLuint shaderProg;
+
+#if 1
 	GLint vertCompiled, fragCompiled, linked;
 
 	GLint v, f;
@@ -135,38 +305,73 @@ void LOADSHaders()
 	//Shader: step2
 	glShaderSource(v, 1, &vs, NULL);
 	glShaderSource(f, 1, &fs, NULL);
+	glCheckError();
 	//Shader: step3
 	glCompileShader(v);
-	//Debug
+	glCheckError();
+	//Debug https://blog.csdn.net/panda1234lee/article/details/54287825
 	glGetShaderiv(v, GL_COMPILE_STATUS, &vertCompiled);
+	if (vertCompiled != GL_TRUE)
+	{
+		delog("Vertex Shader compied error! \n");
+	}
 	glCompileShader(f);
 	glGetShaderiv(f, GL_COMPILE_STATUS, &fragCompiled);
+	if (fragCompiled != GL_TRUE)
+	{
+		delog("Fragment Shader compied error! \n");
+	}
+	glCheckError();
 
 	//Program: Step1
-	p = glCreateProgram();
+	shaderProg = glCreateProgram();
+	glCheckError();
+
 	//Program: Step2
-	glAttachShader(p, v);
-	glAttachShader(p, f);
+	glAttachShader(shaderProg, v);
+	glAttachShader(shaderProg, f);
+	glCheckError();
 
-	glBindAttribLocation(p, ATTRIB_VERTEX, "vertexIn");
-	glBindAttribLocation(p, ATTRIB_TEXTURE, "textureIn");
+	glBindAttribLocation(shaderProg, ATTRIB_VERTEX, "vertexIn");
+	glBindAttribLocation(shaderProg, ATTRIB_TEXTURE, "textureIn");
+	glCheckError();
+
 	//Program: Step3
-	glLinkProgram(p);
-	//Debug
-	glGetProgramiv(p, GL_LINK_STATUS, &linked);
-	//Program: Step4
-	glUseProgram(p);
-	GLuint err2 = glGetError();
-	if (err2 != GL_NO_ERROR) {
-		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
-		delog("4444 Error OpenGL error setting up rendering %i\n", (unsigned int)err2);
+	glLinkProgram(shaderProg);
+	glCheckError();
+	glGetProgramiv(shaderProg, GL_LINK_STATUS, &linked); // Debug
+	if (linked != GL_TRUE)
+	{
+		delog("Program linked error! \n");
 	}
+	//Program: Step4
+	glUseProgram(shaderProg);
+	glCheckError();
+#else
+	// Load the shader program and set it for use 加载shader
+	shaderProg = AshaderProgLoad("Shader.vsh", "Shader.fsh");
+	if (!shaderProg) {
+		// Error messages already displayed...
+		delog("shaderProgLoad fail \n");
+		return;// EXIT_FAILURE;
+	}
+	glUseProgram(shaderProg);
 
+#endif
+
+
+	//GLuint err2 = glGetError();
+	//if (err2 != GL_NO_ERROR)
+	//{
+	//	//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+	//	delog("4444 Error OpenGL error setting up rendering %i\n", (unsigned int)err2);
+	//}
+	
 	//Get Uniform Variables Location
-	textureUniformY = glGetUniformLocation(p, "tex_y");
-	textureUniformU = glGetUniformLocation(p, "tex_u");
-	textureUniformV = glGetUniformLocation(p, "tex_v");
-
+	textureUniformY = glGetUniformLocation(shaderProg, "tex_y");
+	textureUniformU = glGetUniformLocation(shaderProg, "tex_u");
+	textureUniformV = glGetUniformLocation(shaderProg, "tex_v");
+	glCheckError();
 #if TEXTURE_ROTATE
 	static const GLfloat vertexVertices[] = {
 			-1.0f, -0.5f,
@@ -229,11 +434,12 @@ void LOADSHaders()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	GLuint err = glGetError();
-	if (err != GL_NO_ERROR) {
-		//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
-		delog("11111 Error OpenGL error setting up rendering %i\n", (unsigned int)err);
-	}
+	//GLuint err = glGetError();
+	//if (err != GL_NO_ERROR) {
+	//	//2017年5月6日 - GL_INVALID_OPERATION ：（1282）命令的状态集合对于指定的参数非法。
+	//	delog("11111 Error OpenGL error setting up rendering %i\n", (unsigned int)err);
+	//}
+	glCheckError();
 }
 
 int openfile()
@@ -249,6 +455,7 @@ int openfile()
 	plane[0] = buf;
 	plane[1] = plane[0] + ypixel_w * ypixel_h;
 	plane[2] = plane[1] + ypixel_w * ypixel_h / 4;
+#if 0
 	uint8_t *luma = plane[0];
 	uint8_t * cb = plane[1];
 	uint8_t * cr = plane[2];
@@ -277,6 +484,7 @@ int openfile()
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
+#endif
 	return 0;
 }
 
@@ -284,7 +492,7 @@ int ttttt()
 {
 	static bool binit = false;
 
-	SDL_GLContext context;
+	//SDL_GLContext context;
 	if (!binit)
 	{
 		//With base initialization done, we can now open the window and set up the OpenGL context:
