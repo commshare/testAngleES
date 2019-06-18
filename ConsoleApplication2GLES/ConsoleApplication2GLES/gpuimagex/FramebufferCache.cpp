@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "pch.h"
 #include "FramebufferCache.hpp"
 #include "util.h"
 
@@ -58,7 +58,7 @@ Framebuffer* FramebufferCache::fetchFramebuffer(int width, int height, bool only
             framebufferFromCache = new Framebuffer(width, height, onlyTexture, textureAttributes);
         }
     }
-    
+    //确保这个fb没有被其他的引用
     // make sure this framebuffer is not referenced by others
     framebufferFromCache->resetRefenceCount();
     return framebufferFromCache;

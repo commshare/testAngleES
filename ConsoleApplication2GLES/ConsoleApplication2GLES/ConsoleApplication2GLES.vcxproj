@@ -91,6 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>./gpuimagex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +159,19 @@
     <ClInclude Include="Common\Include\esUtil_win.h" />
     <ClInclude Include="delog.h" />
     <ClInclude Include="draw_rgb.h" />
+    <ClInclude Include="gpuimagex\Context.hpp" />
+    <ClInclude Include="gpuimagex\Framebuffer.hpp" />
+    <ClInclude Include="gpuimagex\FramebufferCache.hpp" />
+    <ClInclude Include="gpuimagex\GLProgram.hpp" />
+    <ClInclude Include="gpuimagex\GPUImage-x.h" />
+    <ClInclude Include="gpuimagex\macros.h" />
+    <ClInclude Include="gpuimagex\math.hpp" />
+    <ClInclude Include="gpuimagex\Ref.hpp" />
+    <ClInclude Include="gpuimagex\source\Source.hpp" />
+    <ClInclude Include="gpuimagex\source\SourceImage.h" />
+    <ClInclude Include="gpuimagex\target\Target.hpp" />
+    <ClInclude Include="gpuimagex\target\TargetView.h" />
+    <ClInclude Include="gpuimagex\util.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SDLTriangle\Shader.h" />
   </ItemGroup>
@@ -168,6 +182,17 @@
     <ClCompile Include="Common\Source\esUtil.cpp" />
     <ClCompile Include="ConsoleApplication2GLES.cpp" />
     <ClCompile Include="delog.cpp" />
+    <ClCompile Include="gpuimagex\Context.cpp" />
+    <ClCompile Include="gpuimagex\Framebuffer.cpp" />
+    <ClCompile Include="gpuimagex\FramebufferCache.cpp" />
+    <ClCompile Include="gpuimagex\GLProgram.cpp" />
+    <ClCompile Include="gpuimagex\math.cpp" />
+    <ClCompile Include="gpuimagex\Ref.cpp" />
+    <ClCompile Include="gpuimagex\source\Source.cpp" />
+    <ClCompile Include="gpuimagex\source\SourceImage.cpp" />
+    <ClCompile Include="gpuimagex\target\Target.cpp" />
+    <ClCompile Include="gpuimagex\target\TargetView.cpp" />
+    <ClCompile Include="gpuimagex\util.cpp" />
     <ClCompile Include="LeishenYUV.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

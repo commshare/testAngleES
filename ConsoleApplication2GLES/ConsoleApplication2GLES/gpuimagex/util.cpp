@@ -31,6 +31,7 @@ NS_GI_BEGIN
         std::string strResult="";
         if (NULL != fmt)
         {
+#if 0
             va_list marker;
             va_start(marker, fmt);
             char *buf = 0;
@@ -52,24 +53,27 @@ NS_GI_BEGIN
             strResult.append(buf,result);
             free(buf);
             va_end(marker);
+#endif
         }
         return strResult;
     }
 
     void Log(const std::string& tag, const std::string& format, ...)
     {
+#if 0
         char buffer[10240];
         va_list args;
         va_start(args, format);
         vsprintf(buffer, format.c_str(), args);
         va_end(args);
+
 //#if PLATFORM == PLATFORM_ANDROID
 //        __android_log_print(ANDROID_LOG_INFO, tag.c_str(), "%s", buffer);
 //#elif PLATFORM == PLATFORM_IOS
 //        NSLog(@"%s", buffer);
 //#endif
 		printf("%s \n",buffer);
-        
+#endif        
     }
 
 NS_GI_END

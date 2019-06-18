@@ -1,8 +1,5 @@
-#if PLATFORM == PLATFORM_ANDROID
 
-#include <jni.h>
 #include <string>
-#include <android/bitmap.h>
 #include "source/SourceImage.h"
 #include "source/SourceCamera.h"
 #include "target/TargetView.h"
@@ -12,34 +9,27 @@
 USING_NS_GI
 
 extern "C"
-jlong Java_com_jin_gpuimage_GPUImage_nativeSourceImageNew(
-        JNIEnv *env,
-        jobject)
+uintptr_t
+SourceImageNew()
 {
     return (uintptr_t)(new SourceImage());
 };
 
 extern "C"
-void Java_com_jin_gpuimage_GPUImage_nativeSourceImageDestroy(
-        JNIEnv *env,
-        jobject,
-        jlong classId)
+void SourceImageDestroy(uintptr_t classId)
 {
     ((SourceImage*)classId)->release();
 };
 
 extern "C"
-void Java_com_jin_gpuimage_GPUImage_nativeSourceImageFinalize(
-        JNIEnv *env,
-        jobject,
-        jlong classId)
+void SourceImageFinalize(uintptr_t classId)
 {
     ((SourceImage*)classId)->releaseFramebuffer(false);
     ((SourceImage*)classId)->release();
 };
 
 extern "C"
-void Java_com_jin_gpuimage_GPUImage_nativeSourceImageSetImage(
+void SourceImageSetImage(
         JNIEnv *env,
         jobject,
         jlong classId,

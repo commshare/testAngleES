@@ -22,6 +22,18 @@
     <Filter Include="helper">
       <UniqueIdentifier>{d919fb38-caeb-4842-b34d-8441b18c20e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gpuimage">
+      <UniqueIdentifier>{fbdddba4-ec86-4515-a67a-f62e2a1560d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gpuimage\filter">
+      <UniqueIdentifier>{220ebf1a-a9b5-4323-912f-5fc411d19e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gpuimage\target">
+      <UniqueIdentifier>{dea48ecf-65ba-471a-bf38-cd6c54b90e81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gpuimage\source">
+      <UniqueIdentifier>{68503d6f-ef4e-4680-b29d-6787cbf3d034}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -41,6 +53,45 @@
     </ClInclude>
     <ClInclude Include="Common\Include\esUtil_win.h">
       <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\Context.hpp">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\Framebuffer.hpp">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\GPUImage-x.h">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\macros.h">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\math.hpp">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\Ref.hpp">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\util.h">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\target\Target.hpp">
+      <Filter>gpuimage\target</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\target\TargetView.h">
+      <Filter>gpuimage\target</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\source\Source.hpp">
+      <Filter>gpuimage\source</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\source\SourceImage.h">
+      <Filter>gpuimage\source</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\FramebufferCache.hpp">
+      <Filter>gpuimage</Filter>
+    </ClInclude>
+    <ClInclude Include="gpuimagex\GLProgram.hpp">
+      <Filter>gpuimage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +130,39 @@
     </ClCompile>
     <ClCompile Include="Common\Source\esUtil.cpp">
       <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\Context.cpp">
+      <Filter>gpuimage</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\Framebuffer.cpp">
+      <Filter>gpuimage</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\math.cpp">
+      <Filter>gpuimage</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\Ref.cpp">
+      <Filter>gpuimage</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\util.cpp">
+      <Filter>gpuimage</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\target\Target.cpp">
+      <Filter>gpuimage\target</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\target\TargetView.cpp">
+      <Filter>gpuimage\target</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\source\Source.cpp">
+      <Filter>gpuimage\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\source\SourceImage.cpp">
+      <Filter>gpuimage\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\FramebufferCache.cpp">
+      <Filter>gpuimage</Filter>
+    </ClCompile>
+    <ClCompile Include="gpuimagex\GLProgram.cpp">
+      <Filter>gpuimage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

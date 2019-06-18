@@ -144,7 +144,9 @@ GLuint textureUniformY, textureUniformU, textureUniformV;
 #define ATTRIB_TEXTURE 4
 
 void display(void) {
-	if (fread(buf, 1, pixel_w*pixel_h * 3 / 2, infile) != pixel_w * pixel_h * 3 / 2) {
+	//从infile读取一帧yuv到buf里
+	if (fread(buf, 1, pixel_w*pixel_h * 3 / 2, infile) != pixel_w * pixel_h * 3 / 2)
+	{
 		// Loop
 		fseek(infile, 0, SEEK_SET);
 		fread(buf, 1, pixel_w*pixel_h * 3 / 2, infile);

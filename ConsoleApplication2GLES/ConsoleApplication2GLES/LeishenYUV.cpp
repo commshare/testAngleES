@@ -441,7 +441,7 @@ void LOADSHaders()
 	//}
 	glCheckError();
 }
-
+//https://blog.csdn.net/panda1234lee/article/details/54287825
 int openfile()
 {
 	//Open YUV420P file
@@ -455,7 +455,7 @@ int openfile()
 	plane[0] = buf;
 	plane[1] = plane[0] + ypixel_w * ypixel_h;
 	plane[2] = plane[1] + ypixel_w * ypixel_h / 4;
-#if 0
+#if 0 //https://www.jianshu.com/p/eed347f56d76
 	uint8_t *luma = plane[0];
 	uint8_t * cb = plane[1];
 	uint8_t * cr = plane[2];

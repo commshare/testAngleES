@@ -10,6 +10,8 @@
 //}
 #include "pch.h"
 #define DO_TRI 1
+//https://blog.csdn.net/pangrui201/article/details/75269092
+#define USE_VERTEX_COLOR 1
 
 // Basic OpenGL ES 3 + SDL2 template code
 #include <SDL.h>
@@ -23,10 +25,16 @@ const unsigned int DISP_HEIGHT = 640;
 /** Encapsulates the data for a single vertex.
 * Must match the vertex shader's input.
 */
+
+#if USE_VERTEX_COLOR
+typedef struct Vertex_s {
+	float position[5];
+} Vertex;
+#else
 typedef struct Vertex_s {
 	float position[2];
 } Vertex;
-
+#endif
 
 /** Gets the file's length.
 *
@@ -208,10 +216,33 @@ int do_triangle(GLsizei &numVertices, GLuint &triangleVBO, GLuint &shaderProg)
 	glUseProgram(shaderProg);
 
 	// Create the triangle
+	
+#if USE_VERTEX_COLOR//为每个顶点增加颜色属性
+		//
+		   // Vertex data is stored in the following manner:
+		   // 
+		   // The first two numbers are part of the position: X, Y
+		   // The next three numbers are part of the color: R, G, B
+		   //
 	const Vertex vertices[] = {
+		// Order of coordinates: X, Y, R, G, B
+
+		// Triangle Fan
+		{   0.0f, 0.0f, 1.0f, 0.0f,0.0f },
+	    { -0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
+	    { 0.5f, -0.5f, 0.0f, 0.0f, 1.0f }
+		 /* 0.5f,  0.5f, 0.7f, 0.7f, 0.7f,
+		 -0.5f,  0.5f, 0.7f, 0.7f, 0.7f,
+		 -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,*/
+		   };
+#else
+		const Vertex vertices[] = {
+	 //顶点位置
 	{ 0.0f, -0.9f },
 	{ 0.9f, 0.9f },
-	{-0.9f, 0.9f } };
+	{-0.9f, 0.9f }
+		};
+#endif
 	GLsizei vertSize = sizeof(vertices[0]);
 	/*GLsizei*/ numVertices = sizeof(vertices) / vertSize;
 	triangleVBO = vboCreate(vertices, numVertices);

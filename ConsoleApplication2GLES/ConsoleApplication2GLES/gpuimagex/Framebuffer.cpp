@@ -28,13 +28,13 @@ NS_GI_BEGIN
 std::vector<Framebuffer*> Framebuffer::_framebuffers;
 
 TextureAttributes Framebuffer::defaultTextureAttribures = {
-    .minFilter = GL_LINEAR,
-    .magFilter = GL_LINEAR,
-    .wrapS = GL_CLAMP_TO_EDGE,
-    .wrapT = GL_CLAMP_TO_EDGE,
-    .internalFormat = GL_RGBA,
-    .format = GL_RGBA,
-    .type = GL_UNSIGNED_BYTE
+   /* .minFilter = */GL_LINEAR,
+   /* magFilter = */GL_LINEAR,
+   /* wrapS = */GL_CLAMP_TO_EDGE,
+  /*  wrapT = */ GL_CLAMP_TO_EDGE,
+  /*  internalFormat = */GL_RGBA,
+ /*   format = */GL_RGBA,
+ /*   type =*/ GL_UNSIGNED_BYTE
 };
 
 Framebuffer::Framebuffer(int width, int height, bool onlyGenerateTexture/* = false*/, const TextureAttributes textureAttributes/* = defaultTextureAttribures*/)
